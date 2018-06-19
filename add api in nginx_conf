@@ -1,4 +1,4 @@
-add /api in nginx_conf
+add /api in nginx_configuration for magento
 
 vi /etc/nginx/sites-enabled-default
 
