@@ -1,0 +1,8 @@
+add /api in nginx_conf
+
+vi /etc/nginx/sites-enabled-default
+
+#add in default in configuration
+location /api {
+               rewrite ^/api/rest /api.php?type=rest last;
+       }
