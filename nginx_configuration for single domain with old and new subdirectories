@@ -1,0 +1,74 @@
+
+nginx_configuration for single domain with old/ and new/ subdirectories
+
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server ipv6only=on;
+
+root /usr/share/nginx/html;
+        index index.php index.html index.htm;
+
+        # Make site accessible from http://localhost/
+        #server_name localhost;
+        server_name 192.168.2.55;
+
+        client_max_body_size 20m;
+
+        location / {
+                try_files $uri $uri/ @handler;
+                expires 30d;
+        }
+
+        location /app/                       { deny all; }
+        location /includes/                  { deny all; }
+        location /lib/                       { deny all; }
+        location /media/downloadable/        { deny all; }
+        location /pkginfo/                   { deny all; }
+        location /report/config.xml          { deny all; }
+        location /var/                       { deny all; }
+
+        location /downloader/ {
+          allow 192.168.2.55;
+          deny all;
+        }
+
+        location /var/export/ {deny all; }
+
+        error_page 404 /404.html;
+                error_page 500 502 503 504 /50x.html;
+                location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+
+        location /old {
+                try_files $uri $uri/ /old/index.php?q=$uri&$args;
+        }
+
+        location /new {
+                try_files $uri $uri/ /new/index.php?q=$uri&$args;
+        }
+
+        location  /. {
+                return 404;
+        }
+
+        location @handler {
+                rewrite / /index.php;
+        }
+
+        location ~ .php/ {
+                rewrite ^(.*.php)/ $1 last;
+        }
+
+        location ~ \.php$ {
+                add_header 'Access-Control-Allow-Origin' '*';
+                try_files $uri =404;
+                fastcgi_read_timeout 1800;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
+}
+#</>
