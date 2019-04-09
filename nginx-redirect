@@ -1,0 +1,20 @@
+server {
+        server_name example.com;
+        access_log off;
+        return 301 https://www.example.com$request_uri;
+}
+
+server {
+        server_name 192.168.2.12;
+        access_log off;
+        return 301 https://www.example.com$request_uri;
+}
+
+server {
+        listen 443 ssl;
+        server_name example.com;
+        ssl_certificate /etc/nginx/ssl/example.com.crt;
+        ssl_certificate_key /etc/nginx/ssl/example_com.key;
+        access_log off;
+        return 301 https://www.example.com$request_uri;
+}
