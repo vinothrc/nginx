@@ -1,0 +1,7 @@
+        location / {
+                try_files $uri $uri/ @handler;
+                expires 30d;
+                if ($http_user_agent ~* (SemrushBot|SemrushBot-SA|SemrushBot/2~bl|MauiBot|spider|crawl|ahrefs)) {
+                return 410;
+                }
+        }
